@@ -3,6 +3,7 @@ package tn.esprit.Services.classes;
 import java.util.Collections;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.Map.Entry;
 
 import javax.transaction.Transactional;
 
@@ -11,6 +12,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import lombok.extern.slf4j.Slf4j;
 import tn.esprit.DAO.Entities.Assurance;
 import tn.esprit.DAO.Entities.Beneficaire;
 import tn.esprit.DAO.Entities.Contrat;
@@ -19,6 +21,7 @@ import tn.esprit.DAO.Repository.AssuranceRepository;
 import tn.esprit.DAO.Repository.BeneficaireRepository;
 import tn.esprit.DAO.Repository.ContratRepository;
 import tn.esprit.Services.interfaces.BenficaireService;
+@Slf4j
 @Service
 public class BeneficaireServiceImplementation implements BenficaireService  {
 	@Autowired
@@ -69,6 +72,12 @@ public class BeneficaireServiceImplementation implements BenficaireService  {
 	@Scheduled(cron = "*/60 * * * * *" )
 	public void statistiques() {
 		TreeMap<Integer, Integer> tree_map = new TreeMap<>(Collections.reverseOrder());
+		for (Beneficaire b : beneficaireRepository.findAll()) {
+			tree_map.put(b.getAssurance().size(), b.getCin());
+		}
+		for (Entry<Integer, Integer> va : tree_map.entrySet()) {
+			log.info(va.getKey() + "|" + va.getValue());
+		}
 		
 	}
 
